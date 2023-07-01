@@ -5,7 +5,7 @@ module.exports.getAllUsers = (req, res) => {
     .then((users) => res.status(200).send(users))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: `${Object.values(err.errors).map((e) => e.message).join(', ')}` });
+        res.status(400).send({ message: 'Что-то не удаётся' });
       }
       res.status(500).send({ message: err.message });
     });
@@ -21,8 +21,8 @@ module.exports.getUserById = (req, res) => {
       }
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(400).send({ message: `${Object.values(err.errors).map((e) => e.message).join(', ')}` });
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Не удаётся считать id' });
       }
       res.status(500).send({ message: err.message });
     });
