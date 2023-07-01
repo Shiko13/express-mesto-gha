@@ -13,7 +13,13 @@ module.exports.getAllUsers = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.id)
-    .then((user) => res.status(200).send(user))
+    .then((user) => {
+      if (!user) {
+        res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
+      } else {
+        res.status(200).send(user);
+      }
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: `${Object.values(err.errors).map((e) => e.message).join(', ')}` });
@@ -67,7 +73,13 @@ module.exports.updateAvatar = (req, res) => {
       upsert: true,
     },
   )
-    .then((user) => res.status(200).send(user))
+    .then((user) => {
+      if (!user) {
+        res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
+      } else {
+        res.status(200).send(user);
+      }
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: `${Object.values(err.errors).map((e) => e.message).join(', ')}` });
@@ -78,7 +90,13 @@ module.exports.updateAvatar = (req, res) => {
 
 module.exports.deleteUserById = (req, res) => {
   User.findByIdAndRemove(req.params.id)
-    .then((user) => res.status(200).send(user))
+    .then((user) => {
+      if (!user) {
+        res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
+      } else {
+        res.status(200).send(user);
+      }
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: `${Object.values(err.errors).map((e) => e.message).join(', ')}` });

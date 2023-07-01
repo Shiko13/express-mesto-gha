@@ -13,7 +13,13 @@ module.exports.getAllCards = (req, res) => {
 
 module.exports.getCardById = (req, res) => {
   Card.findById(req.params.id)
-    .then((card) => res.status(200).send(card))
+    .then((card) => {
+      if (!card) {
+        res.status(404).send({ message: 'Запрашиваемая карточка не найдена' });
+      } else {
+        res.status(200).send(card);
+      }
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: `${Object.values(err.errors).map((e) => e.message).join(', ')}` });
@@ -35,7 +41,13 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCardById = (req, res) => {
   Card.findByIdAndRemove(req.params.id)
-    .then((card) => res.status(200).send(card))
+    .then((card) => {
+      if (!card) {
+        res.status(404).send({ message: 'Запрашиваемая карточка не найдена' });
+      } else {
+        res.status(200).send(card);
+      }
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: `${Object.values(err.errors).map((e) => e.message).join(', ')}` });
@@ -50,7 +62,13 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.status(200).send(card))
+    .then((card) => {
+      if (!card) {
+        res.status(404).send({ message: 'Запрашиваемая карточка не найдена' });
+      } else {
+        res.status(200).send(card);
+      }
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: `${Object.values(err.errors).map((e) => e.message).join(', ')}` });
@@ -65,7 +83,13 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.status(200).send(card))
+    .then((card) => {
+      if (!card) {
+        res.status(404).send({ message: 'Запрашиваемая карточка не найдена' });
+      } else {
+        res.status(200).send(card);
+      }
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: `${Object.values(err.errors).map((e) => e.message).join(', ')}` });
