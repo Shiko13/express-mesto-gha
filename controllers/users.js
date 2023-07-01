@@ -46,13 +46,13 @@ module.exports.updateUser = (req, res) => {
       upsert: true,
     },
   )
-    .then((user) => res.status(200).send(user)
-      .catch((err) => {
-        if (err.name === 'ValidationError') {
-          res.status(400).send({ message: `${Object.values(err.errors).map((e) => e.message).join(', ')}` });
-        }
-        res.status(500).send({ message: err.message });
-      }));
+    .then((user) => res.status(200).send(user))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: `${Object.values(err.errors).map((e) => e.message).join(', ')}` });
+      }
+      res.status(500).send({ message: err.message });
+    });
 };
 
 module.exports.updateAvatar = (req, res) => {
@@ -67,13 +67,13 @@ module.exports.updateAvatar = (req, res) => {
       upsert: true,
     },
   )
-    .then((user) => res.status(200).send(user)
-      .catch((err) => {
-        if (err.name === 'ValidationError') {
-          res.status(400).send({ message: `${Object.values(err.errors).map((e) => e.message).join(', ')}` });
-        }
-        res.status(500).send({ message: err.message });
-      }));
+    .then((user) => res.status(200).send(user))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: `${Object.values(err.errors).map((e) => e.message).join(', ')}` });
+      }
+      res.status(500).send({ message: err.message });
+    });
 };
 
 module.exports.deleteUserById = (req, res) => {
