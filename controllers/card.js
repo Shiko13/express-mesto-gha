@@ -30,6 +30,8 @@ module.exports.getCardById = (req, res) => {
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
+  console.log(req.body);
+  console.log(req);
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.status(201).send(card))
     .catch((err) => {
