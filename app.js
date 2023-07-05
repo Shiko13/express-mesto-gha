@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const routes = require('./routes/index');
+const helmet = require('helmet');
 
 const app = express();
 
@@ -16,6 +17,7 @@ mongoose.connect(DB_URL, {
   console.log('Connected to database "mestodb"');
 });
 
+app.use(helmet());
 app.use((req, res, next) => {
   req.user = {
     _id: '64a00c22eadee7f49da7c168',
