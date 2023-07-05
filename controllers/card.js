@@ -54,15 +54,18 @@ module.exports.likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.status(200).send(card))
-    .catch((err) => {
-      if (err.message === 'NotValidId') {
+    .then((card) => {
+      if (!card) {
         res.status(404).send({ message: 'Запрашиваемая карточка не найдена' });
-      } else if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Не удаётся считать id' });
       } else {
-        res.status(500).send({ message: err.message });
+        res.status(200).send(card);
       }
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Не удаётся считать id' });
+      }
+      res.status(500).send({ message: err.message });
     });
 };
 
@@ -72,14 +75,17 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.status(200).send(card))
-    .catch((err) => {
-      if (err.message === 'NotValidId') {
+    .then((card) => {
+      if (!card) {
         res.status(404).send({ message: 'Запрашиваемая карточка не найдена' });
-      } else if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Не удаётся считать id' });
       } else {
-        res.status(500).send({ message: err.message });
+        res.status(200).send(card);
       }
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Не удаётся считать id' });
+      }
+      res.status(500).send({ message: err.message });
     });
 };
