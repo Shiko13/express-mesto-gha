@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const { errors } = require('celebrate');
 const errorHandler = require('./errors/ErrorHandler');
-const { validateCreationUser } = require('./middlewares/validation');
+const { validateCreationUser, validateSignIn } = require('./middlewares/validation');
 const routes = require('./routes/index');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
@@ -14,7 +14,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.post('/signin', login);
+app.post('/signin', validateSignIn, login);
 app.post('/signup', validateCreationUser, createUser);
 
 const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
