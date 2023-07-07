@@ -14,5 +14,14 @@ module.exports.validateCreationUser = celebrate({
     name: Joi.string().min(2).max(30).required(),
     about: Joi.string().min(2).max(30).required(),
     avatar: Joi.string().pattern(regex).required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
+  }),
+});
+
+module.exports.validateSignIn = celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
   }),
 });
