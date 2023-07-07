@@ -2,7 +2,6 @@
   "extends": "airbnb-base",
   "rules": {
     "no-underscore-dangle": ["error", { "allow": ["_id"]}],
-    "no-console": "off",
-    "import/no-extraneous-dependencies": ["validator", {"includeInternal": true, "includeTypes": true}]
+    "no-console": "off"
   }
 }

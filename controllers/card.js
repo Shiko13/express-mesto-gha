@@ -1,4 +1,5 @@
 const Card = require('../models/card');
+// const NotFoundError = require('../errors/NotFoundError');
 
 module.exports.getAllCards = (req, res) => {
   Card.find({})
@@ -36,7 +37,13 @@ module.exports.createCard = (req, res) => {
 module.exports.deleteCardById = (req, res) => {
   Card.findByIdAndRemove(req.params.id)
     .orFail(new Error('NotValidId'))
-    .then((card) => res.status(200).send(card))
+    .then((card) => {
+      if (!card.owner.equals(res.user._id)) {
+        res.status(403).send({ message: 'У вас недостаточно прав для удаления данной карточки' });
+      } else {
+        res.status(200).send(card);
+      }
+    })
     .catch((err) => {
       if (err.message === 'NotValidId') {
         res.status(404).send({ message: 'Запрашиваемая карточка не найдена' });
