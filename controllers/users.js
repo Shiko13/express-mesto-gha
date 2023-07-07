@@ -26,7 +26,7 @@ module.exports.getUserById = (req, res) => {
 };
 
 module.exports.getUserInfo = (req, res) => {
-  User.findById(req.params.id)
+  User.findById(req.user._id)
     .orFail(new Error('NotValidId'))
     .then((user) => res.status(200).send(user))
     .catch((err) => {

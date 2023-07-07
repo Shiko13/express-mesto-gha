@@ -1,5 +1,5 @@
 const Card = require('../models/card');
-// const NotFoundError = require('../errors/NotFoundError');
+const ForbiddenError = require('../errors/ForbiddenError');
 
 module.exports.getAllCards = (req, res) => {
   Card.find({})
@@ -34,14 +34,14 @@ module.exports.createCard = (req, res) => {
     });
 };
 
-module.exports.deleteCardById = (req, res) => {
+module.exports.deleteCardById = (req, res, next) => {
   Card.findByIdAndRemove(req.params.id)
     .orFail(new Error('NotValidId'))
     .then((card) => {
       if (!card.owner.equals(res.user._id)) {
-        res.status(403).send({ message: 'У вас недостаточно прав для удаления данной карточки' });
+        next(new ForbiddenError('У вас недостаточно прав для удаления данной карточки'));
       } else {
-        res.status(200).send(card);
+        return res.status(200).send(card);
       }
     })
     .catch((err) => {
@@ -50,7 +50,7 @@ module.exports.deleteCardById = (req, res) => {
       } else if (err.name === 'CastError') {
         res.status(400).send({ message: 'Не удаётся считать id' });
       } else {
-        res.status(500).send({ message: err.message });
+        next(err);
       }
     });
 };
