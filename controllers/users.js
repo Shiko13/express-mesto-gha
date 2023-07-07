@@ -11,8 +11,6 @@ module.exports.getAllUsers = (req, res) => {
 };
 
 module.exports.getUserInfo = (req, res, next) => {
-  console.log(req.user._id);
-  console.log('tasfsdafasdfext');
   User.findById(req.user._id)
     .orFail(new Error('NotValidId'))
     .then((user) => {

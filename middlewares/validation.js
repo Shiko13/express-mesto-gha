@@ -5,7 +5,7 @@ const regex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\\+\\$,\w]+@)?[A-Za-z0-9.-]+|
 module.exports.validateCreationCard = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),
-    link: Joi.string().required(),
+    link: Joi.string().pattern(regex).required(),
   }),
 });
 
@@ -28,6 +28,19 @@ module.exports.validateSignIn = celebrate({
 
 module.exports.validateUserId = celebrate({
   body: Joi.object().keys({
-    id: Joi.string().required(),
+    id: Joi.string().required().hex().length(24),
+  }),
+});
+
+module.exports.validateUpdateUser = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+  }),
+});
+
+module.exports.validateUpdateAvatar = celebrate({
+  body: Joi.object().keys({
+    avatar: Joi.string().pattern(regex),
   }),
 });
