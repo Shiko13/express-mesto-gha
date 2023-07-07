@@ -19,7 +19,8 @@ module.exports.getUserInfo = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.getUserById = (req, res) => {
+module.exports.getUserById = (req, res, next) => {
+  console.log(req.params.id);
   User.findById(req.params.id)
     .orFail(new Error('NotValidId'))
     .then((user) => res.status(200).send(user))
@@ -29,7 +30,7 @@ module.exports.getUserById = (req, res) => {
       } else if (err.name === 'CastError') {
         res.status(400).send({ message: 'Не удаётся считать id' });
       } else {
-        res.status(500).send({ message: err.message });
+        next(err);
       }
     });
 };
@@ -56,7 +57,6 @@ module.exports.createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        console.log(err);
         next(new ValidationError('Ошибка валидации'));
       } else if (err.code === 11000) {
         next(new DuplicateError('Эта почта уже была зарегистрирована'));

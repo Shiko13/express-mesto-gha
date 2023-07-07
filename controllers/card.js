@@ -38,11 +38,10 @@ module.exports.deleteCardById = (req, res, next) => {
   Card.findByIdAndRemove(req.params.id)
     .orFail(new Error('NotValidId'))
     .then((card) => {
-      if (!card.owner.equals(res.user._id)) {
-        next(new ForbiddenError('У вас недостаточно прав для удаления данной карточки'));
-      } else {
-        return res.status(200).send(card);
+      if (!card.owner.equals(req.user._id)) {
+        throw new ForbiddenError('У вас недостаточно прав для удаления данной карточки');
       }
+      return res.status(200).send('Карточка удалена');
     })
     .catch((err) => {
       if (err.message === 'NotValidId') {

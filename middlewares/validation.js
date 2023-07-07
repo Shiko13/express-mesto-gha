@@ -27,7 +27,13 @@ module.exports.validateSignIn = celebrate({
 });
 
 module.exports.validateUserId = celebrate({
-  body: Joi.object().keys({
+  params: Joi.object().keys({
+    id: Joi.string().required().hex().length(24),
+  }),
+});
+
+module.exports.validateCardId = celebrate({
+  params: Joi.object().keys({
     id: Joi.string().required().hex().length(24),
   }),
 });
