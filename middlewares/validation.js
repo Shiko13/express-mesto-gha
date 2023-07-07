@@ -4,15 +4,15 @@ const regex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\\+\\$,\w]+@)?[A-Za-z0-9.-]+|
 
 module.exports.validateCreationCard = celebrate({
   body: Joi.object().keys({
-    name: Joi.string.min(2).max(30).required(),
-    link: Joi.string.required(),
+    name: Joi.string().min(2).max(30).required(),
+    link: Joi.string().required(),
   }),
 });
 
 module.exports.validateCreationUser = celebrate({
   body: Joi.object().keys({
-    name: Joi.string.min(2).max(30).required(),
-    about: Joi.string.min(2).max(30).required(),
-    avatar: Joi.string.pattern(regex).required(),
+    name: Joi.string().min(2).max(30).required(),
+    about: Joi.string().min(2).max(30).required(),
+    avatar: Joi.string().pattern(regex).required(),
   }),
 });
