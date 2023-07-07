@@ -11,11 +11,11 @@ module.exports.validateCreationCard = celebrate({
 
 module.exports.validateCreationUser = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30).required(),
-    about: Joi.string().min(2).max(30).required(),
-    avatar: Joi.string().pattern(regex).required(),
     email: Joi.string().email().required(),
     password: Joi.string().required(),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string().pattern(regex),
   }),
 });
 
