@@ -10,21 +10,6 @@ module.exports.getAllUsers = (req, res) => {
     .catch((err) => res.status(500).send({ message: err.message }));
 };
 
-// module.exports.getUserById = (req, res) => {
-//   User.findById(req.params.id)
-//     .orFail(new Error('NotValidId'))
-//     .then((user) => res.status(200).send(user))
-//     .catch((err) => {
-//       if (err.message === 'NotValidId') {
-//         res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
-//       } else if (err.name === 'CastError') {
-//         res.status(400).send({ message: 'Не удаётся считать id' });
-//       } else {
-//         res.status(500).send({ message: err.message });
-//       }
-//     });
-// };
-
 module.exports.getUserInfo = (req, res, next) => {
   console.log(req.user._id);
   console.log('tasfsdafasdfext');
@@ -34,6 +19,21 @@ module.exports.getUserInfo = (req, res, next) => {
       res.send(user);
     })
     .catch(next);
+};
+
+module.exports.getUserById = (req, res) => {
+  User.findById(req.params.id)
+    .orFail(new Error('NotValidId'))
+    .then((user) => res.status(200).send(user))
+    .catch((err) => {
+      if (err.message === 'NotValidId') {
+        res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
+      } else if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Не удаётся считать id' });
+      } else {
+        res.status(500).send({ message: err.message });
+      }
+    });
 };
 
 module.exports.createUser = (req, res, next) => {
