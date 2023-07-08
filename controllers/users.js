@@ -69,7 +69,7 @@ module.exports.createUser = (req, res, next) => {
 
 module.exports.updateUser = (req, res) => {
   User.findByIdAndUpdate(
-    req.params._id,
+    req.user._id,
     {
       name: req.body.name,
       about: req.body.about,
@@ -90,7 +90,7 @@ module.exports.updateUser = (req, res) => {
 
 module.exports.updateAvatar = (req, res) => {
   User.findByIdAndUpdate(
-    req.params._id,
+    req.user._id,
     {
       avatar: req.body.avatar,
     },
