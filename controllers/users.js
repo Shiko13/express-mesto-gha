@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const DuplicateError = require('../errors/DuplicateError');
 const BadRequestError = require('../errors/BadRequestError');
+const NotFoundError = require('../errors/NotFoundError');
 
 module.exports.getAllUsers = (req, res) => {
   User.find({})
@@ -12,7 +13,7 @@ module.exports.getAllUsers = (req, res) => {
 
 module.exports.getUserInfo = (req, res, next) => {
   User.findById(req.user._id)
-    .orFail(new Error('NotValidId'))
+    .orFail(() => new NotFoundError('Пользователь с указанным id не существует'))
     .then((user) => {
       res.send(user);
     })
@@ -68,7 +69,7 @@ module.exports.createUser = (req, res, next) => {
 
 module.exports.updateUser = (req, res) => {
   User.findByIdAndUpdate(
-    req.params.id,
+    req.params._id,
     {
       name: req.body.name,
       about: req.body.about,
@@ -76,7 +77,6 @@ module.exports.updateUser = (req, res) => {
     {
       new: true,
       runValidators: true,
-      upsert: true,
     },
   )
     .then((user) => res.status(200).send(user))
@@ -90,14 +90,13 @@ module.exports.updateUser = (req, res) => {
 
 module.exports.updateAvatar = (req, res) => {
   User.findByIdAndUpdate(
-    req.params.id,
+    req.params._id,
     {
       avatar: req.body.avatar,
     },
     {
       new: true,
       runValidators: true,
-      upsert: true,
     },
   )
     .then((user) => {
@@ -112,20 +111,6 @@ module.exports.updateAvatar = (req, res) => {
         res.status(400).send({ message: `${Object.values(err.errors).map((e) => e.message).join(', ')}` });
       }
       res.status(500).send({ message: err.message });
-    });
-};
-
-module.exports.deleteUserById = (req, res) => {
-  User.findByIdAndRemove(req.params.id)
-    .then((user) => res.status(200).send(user))
-    .catch((err) => {
-      if (err.message === 'NotValidId') {
-        res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
-      } else if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Не удаётся считать id' });
-      } else {
-        res.status(500).send({ message: err.message });
-      }
     });
 };
 
