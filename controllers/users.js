@@ -1,8 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const ValidationError = require('../errors/ValidationError');
 const DuplicateError = require('../errors/DuplicateError');
+const BadRequestError = require('../errors/BadRequestError');
 
 module.exports.getAllUsers = (req, res) => {
   User.find({})
@@ -57,7 +57,7 @@ module.exports.createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new ValidationError('Ошибка валидации'));
+        next(new BadRequestError('Ошибка валидации'));
       } else if (err.code === 11000) {
         next(new DuplicateError('Эта почта уже была зарегистрирована'));
       } else {
