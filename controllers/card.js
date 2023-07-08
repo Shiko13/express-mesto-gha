@@ -6,18 +6,16 @@ const NotFoundError = require('../errors/NotFoundError');
 
 module.exports.getAllCards = (req, res, next) => {
   Card.find({})
-    .then((cards) => res.status(200).send(cards))
+    .then((cards) => res.send({ cards }))
     .catch(next);
 };
 
 module.exports.getCardById = (req, res, next) => {
   Card.findById(req.params.id)
-    .orFail(new Error('NotValidId'))
+    .orFail(() => new NotFoundError('Запрашиваемая карточка не найдена'))
     .then((card) => res.status(200).send(card))
     .catch((err) => {
-      if (err.message === 'NotValidId') {
-        next(new BadRequestError('Запрашиваемая карточка не найдена'));
-      } else if (err.name === 'CastError') {
+      if (err.name === 'CastError') {
         next(new CastError('Не удаётся считать id'));
       } else {
         next();
@@ -48,19 +46,19 @@ module.exports.deleteCardById = (req, res, next) => {
         throw new ForbiddenError('У вас недостаточно прав для удаления данной карточки');
       }
       card.deleteOne()
-        .then(() => res.status(200).send(card))
+        .then(() => res.send({ card }))
         .catch(next);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Не удаётся считать id' });
+        next(new CastError('Не удаётся считать id'));
       } else {
         next(err);
       }
     });
 };
 
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.id,
     { $addToSet: { likes: req.user._id } },
@@ -68,20 +66,20 @@ module.exports.likeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        res.status(404).send({ message: 'Запрашиваемая карточка не найдена' });
+        throw new NotFoundError('Запрашиваемая карточка не найдена');
       } else {
-        res.status(200).send(card);
+        res.send({ card });
       }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Не удаётся считать id' });
+        next(new CastError('Не удаётся считать id'));
       }
-      res.status(500).send({ message: err.message });
+      next(err);
     });
 };
 
-module.exports.dislikeCard = (req, res) => {
+module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.id,
     { $pull: { likes: req.user._id } },
@@ -89,15 +87,15 @@ module.exports.dislikeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        res.status(404).send({ message: 'Запрашиваемая карточка не найдена' });
+        throw new NotFoundError('Запрашиваемая карточка не найдена');
       } else {
-        res.status(200).send(card);
+        res.send({ card });
       }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Не удаётся считать id' });
+        next(new CastError('Не удаётся считать id'));
       }
-      res.status(500).send({ message: err.message });
+      next(err);
     });
 };
