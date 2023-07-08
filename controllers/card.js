@@ -1,23 +1,25 @@
 const Card = require('../models/card');
 const ForbiddenError = require('../errors/ForbiddenError');
+const BadRequestError = require('../errors/BadRequestError');
+const CastError = require('../errors/CastError');
 
-module.exports.getAllCards = (req, res) => {
+module.exports.getAllCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.status(200).send(cards))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .catch(next);
 };
 
-module.exports.getCardById = (req, res) => {
+module.exports.getCardById = (req, res, next) => {
   Card.findById(req.params.id)
     .orFail(new Error('NotValidId'))
     .then((card) => res.status(200).send(card))
     .catch((err) => {
       if (err.message === 'NotValidId') {
-        res.status(404).send({ message: 'Запрашиваемая карточка не найдена' });
+        next(new BadRequestError('Запрашиваемая карточка не найдена'));
       } else if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Не удаётся считать id' });
+        next(new CastError('Не удаётся считать id'));
       } else {
-        res.status(500).send({ message: err.message });
+        next();
       }
     });
 };
