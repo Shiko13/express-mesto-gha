@@ -2,6 +2,7 @@ const Card = require('../models/card');
 const ForbiddenError = require('../errors/ForbiddenError');
 const BadRequestError = require('../errors/BadRequestError');
 const CastError = require('../errors/CastError');
+const NotFoundError = require('../errors/NotFoundError');
 
 module.exports.getAllCards = (req, res, next) => {
   Card.find({})
@@ -24,31 +25,34 @@ module.exports.getCardById = (req, res, next) => {
     });
 };
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.status(201).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: `${Object.values(err.errors).map((e) => e.message).join(', ')}` });
+        next(new BadRequestError('Запрашиваемая карточка не найдена'));
+      } else {
+        next();
       }
-      res.status(500).send({ message: err.message });
     });
 };
 
 module.exports.deleteCardById = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.id)
-    .orFail(new Error('NotValidId'))
+  Card.findById(req.params.id)
     .then((card) => {
+      if (!card) {
+        throw new NotFoundError('Запрашиваемая карточка не найдена');
+      }
       if (!card.owner.equals(req.user._id)) {
         throw new ForbiddenError('У вас недостаточно прав для удаления данной карточки');
       }
-      return res.status(200).send(card);
+      card.deleteOne()
+        .then(() => res.status(200).send('Карточка удалена'))
+        .catch(next);
     })
     .catch((err) => {
-      if (err.message === 'NotValidId') {
-        res.status(404).send({ message: 'Запрашиваемая карточка не найдена' });
-      } else if (err.name === 'CastError') {
+      if (err.name === 'CastError') {
         res.status(400).send({ message: 'Не удаётся считать id' });
       } else {
         next(err);
