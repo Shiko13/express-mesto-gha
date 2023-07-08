@@ -6,7 +6,7 @@ const BadRequestError = require('../errors/BadRequestError');
 
 module.exports.getAllUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(200).send(users))
+    .then((users) => res.send({ users }))
     .catch((err) => res.status(500).send({ message: err.message }));
 };
 
