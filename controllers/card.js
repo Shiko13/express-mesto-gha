@@ -18,7 +18,7 @@ module.exports.getCardById = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new CastError('Не удаётся считать id'));
       } else {
-        next();
+        next(err);
       }
     });
 };
@@ -31,7 +31,7 @@ module.exports.createCard = (req, res, next) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Запрашиваемая карточка не найдена'));
       } else {
-        next();
+        next(err);
       }
     });
 };
@@ -74,8 +74,9 @@ module.exports.likeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new CastError('Не удаётся считать id'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -95,7 +96,8 @@ module.exports.dislikeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new CastError('Не удаётся считать id'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };

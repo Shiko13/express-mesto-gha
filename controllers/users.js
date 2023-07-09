@@ -81,8 +81,9 @@ module.exports.updateUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Ошибка валидации'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -107,8 +108,9 @@ module.exports.updateAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Ошибка валидации'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
